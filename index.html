@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Khmer:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="shortcut icon"
+        href="https://image.shutterstock.com/image-vector/february-14-calendar-icon-valentines-260nw-361616087.jpg"
+        type="image/x-icon">
+</head>
+
+<style>
+    /* (A) ENTIRE PAGE */
+* {
+    font-family: "Noto Serif Khmer", serif;
+    box-sizing: border-box;
+}
+
+body {
+    position: relative;
+    padding: 10px;
+    margin: 0;
+    overflow-x: hidden;
+    background: rgb(238, 174, 202);
+    background: radial-gradient(circle,
+            rgba(238, 174, 202, 1) 0%,
+            rgba(148, 187, 233, 1) 100%);
+}
+
+.hide {
+    display: none !important;
+}
+
+/* (B) PERIOD SELECTOR */
+#calPeriod {
+    display: flex;
+    padding: 15px;
+}
+
+#calPeriod input,
+#calPeriod select {
+    background: #fefeff00;
+    font-size: 32px;
+    font-weight: 800;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+}
+
+.current-year {
+    font-size: 32px;
+    margin-left: 20px;
+
+}
+
+/* (C) CALENDAR */
+#calWrap {
+    background: rgb(240, 239, 239, 0.6);
+}
+
+/* (C1) SHARED */
+.calHead,
+.calRow {
+    display: flex;
+}
+
+.calCell {
+    width: 14.2857%;
+}
+
+/* (C2) HEADER - DAY NAMES */
+.calHead .calCell {
+    font-size: 24px;
+    color: #fff;
+    background: linear-gradient(45deg, rgb(101, 119, 197), rgb(66, 66, 153), rgb(91, 51, 209));
+    font-weight: 700;
+    text-align: center;
+    padding: 15px 0;
+    height: 120px;
+    padding-top: 38px;
+}
+
+
+/* (C3) BODY - INDIVIDUAL DAYS */
+.calBlank {
+    background: #b3b3b3b9;
+}
+
+.calToday {
+    background: #5761e9;
+}
+
+.calToday .cellDate {
+    color: #ff9b9b;
+}
+
+@media (max-width:2000px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+@media (max-width:1800px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+@media (max-width:1600px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+@media (max-width:1200px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+@media (max-width: 992px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+
+@media (max-width:776px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 100px;
+        height: 105px;
+        text-align: center;
+        padding-top: 12px;
+    }
+}
+
+@media (max-width:500px) {
+    .calBody .calCell {
+        border: 1px solid #f5f5f5;
+        min-height: 50px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        /* Align items horizontally in the center */
+        align-items: center;
+        /* Align items vertically in the center */
+        text-align: center;
+        padding-top: 1px;
+    }
+}
+
+.calCell.sunday {
+    background-color: red;
+    /* Adjust the background color as needed */
+}
+
+.cellDate,
+.evt {
+    padding: 15px;
+}
+
+.cellDate {
+    font-size: 24px;
+    font-weight: 800;
+    color: #000000;
+}
+
+.evt {
+    color: #b12020;
+    font-weight: 700;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* (D) EVENT FORM */
+#calForm {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100vw;
+    height: 100%;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#calForm:is([open]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+#calForm form {
+    position: relative;
+    width: 450px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #fafafae7;
+}
+
+#evtClose {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    color: #b12020;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#calForm h2 {
+    margin: 0 0 15px 0;
+}
+
+#calForm label,
+#calForm input[type=text],
+#calForm textarea {
+    width: 100%;
+}
+
+#calForm label {
+    color: #a1a1a1;
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+#calForm input[type=text],
+#calForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    background: #f5f5f5;
+}
+
+#calForm textarea {
+    height: 100px;
+    resize: none;
+}
+
+#calForm input[type=button],
+#calForm input[type=submit] {
+    border: 0;
+    padding: 10px;
+    margin: 10px 2px 0 0;
+    color: #fff;
+    background: red;
+    cursor: pointer;
+}
+
+/* (X) DOES NOT MATTER */
+#code-boxx {
+
+    font-weight: 00;
+    margin-top: 30px;
+}
+
+#code-boxx a {
+    display: inline-block;
+    border: 0;
+    padding: 5px;
+    text-decoration: none;
+    background: #b90a0a;
+    color: #fff;
+}
+
+.btn_year {
+    display: flex;
+    justify-content: center;
+}
+
+
+
+#back {
+    font-weight: 800;
+    font-size: 24px;
+    border-radius: 10px;
+    width: 170px;
+    height: 60px;
+    color: #eee;
+    background-color: blue;
+}
+
+#back i {
+    font-size: 24px;
+}
+
+#next {
+    font-weight: 800;
+    font-size: 24px;
+    border-radius: 10px;
+    width: 170px;
+    height: 60px;
+    color: #eee;
+    background-color: blue;
+}
+
+#next i {
+    font-size: 24px;
+}
+
+#back:hover {
+    background-color: rgb(80, 80, 234);
+}
+
+#next:hover {
+    background-color: rgb(80, 80, 234);
+}
+
+@media (max-width:500px) {
+    .calHead .calCell {
+        font-size: 16px;
+        padding-top: 20px;
+        height: 60px;
+    }
+
+    #calPeriod input,
+    #calPeriod select {
+        background: #fefeff00;
+        font-size: 26px;
+        font-weight: 800;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .current-year {
+        font-size: 26px;
+    }
+
+    .cellDate {
+        font-size: 20px;
+        font-weight: 800;
+        color: #000000;
+    }
+
+    #back {
+        margin: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        border-radius: 10px;
+        width: 120px;
+        height: 40px;
+        color: #eee;
+        background-color: blue;
+    }
+
+    #back i {
+        font-size: 18px;
+    }
+
+    #next {
+        margin: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        border-radius: 10px;
+        width: 120px;
+        height: 40px;
+        color: #eee;
+        background-color: blue;
+    }
+
+    #next i {
+        font-size: 18px;
+    }
+}
+
+#calMonth {
+    margin: 5px;
+
+}
+
+#calYear {
+    margin: 5px;
+}
+
+.calCell {
+    /* Your existing styles */
+    position: relative;
+    /* Ensure relative positioning for festival letter */
+    overflow: visible;
+    /* Allow festival letters to overflow */
+}
+
+.festival-letter {
+    position: absolute;
+    background-color: #eba3a3;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: black;
+    padding: 15px;
+    /* Increase padding for better visibility */
+    font-weight: bold;
+    text-align: center;
+    font-size: 12px;
+    /* Adjust font size for smaller screens */
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 1.1;
+}
+
+@media (max-width: 1400px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+    }
+}
+
+@media (max-width: 1200px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+        display: none;
+
+    }
+}
+
+@media (max-width: 992px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+        display: none;
+
+    }
+}
+
+@media (max-width: 776px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+        display: none;
+
+    }
+}
+
+@media (max-width: 576px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+        display: none;
+
+    }
+}
+
+@media (max-width: 500px) {
+    .festival-letter {
+        font-size: 12px;
+        /* Adjust font size for smaller screens */
+        padding: 8px;
+        /* Adjust padding for smaller screens */
+        display: none;
+
+    }
+}
+
+/* Set number of days width*/
+
+@media (max-width: 1400px) {
+
+    .cellDate,
+    .evt {
+        padding: 25px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 1200px) {
+
+    .cellDate,
+    .evt {
+        padding: 23px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 992px) {
+
+    .cellDate,
+    .evt {
+        padding: 25px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 776px) {
+
+    .cellDate,
+    .evt {
+        padding: 25px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .cellDate,
+    .evt {
+        padding: 25px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .cellDate,
+    .evt {
+        padding: 25px;
+        text-align: center;
+    }
+}
+
+/* Set next button  width*/
+@media (max-width: 2000px) {
+    .btn_year {
+        padding-top: 21px;
+
+    }
+}
+
+@media (max-width: 1900px) {
+    .btn_year {
+        padding-top: 18px;
+
+    }
+}
+
+@media (max-width: 1800px) {
+    .btn_year {
+        padding-top: 18px;
+
+    }
+}
+
+
+@media (max-width: 1600px) {
+    .btn_year {
+        padding-top: 18px;
+
+    }
+}
+
+@media (max-width: 1200px) {
+    .btn_year {
+        padding-top: 18px;
+
+    }
+}
+
+@media (max-width: 992px) {
+    .btn_year {
+        padding-top: 18px;
+
+    }
+}
+
+@media (max-width: 776px) {
+    .btn_year {
+        padding-top: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn_year {
+        padding-top: 18px;
+    }
+}
+
+@media (max-width: 500px) {
+    .btn_year {
+        padding-top: 34px;
+    }
+}
+
+/* Set magain to button next or previuos */
+@media (max-width: 2000px) {
+    .btn_year button {
+        margin: 0 310px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 1900px) {
+    .btn_year button {
+        margin: 0 192px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 1800px) {
+    .btn_year button {
+        margin: 0 172px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 1600px) {
+    .btn_year button {
+        margin: 0 172px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 1400px) {
+    .btn_year button {
+        margin: 0 172px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 1200px) {
+    .btn_year button {
+        margin: 0 150px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 992px) {
+    .btn_year button {
+        margin: 0 113px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+
+@media (max-width: 776px) {
+    .btn_year button {
+        margin: 0 60px;
+        text-align: center;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 576px) {
+    .btn_year button {
+        margin: 0 45px;
+        /* Adjust the margin as needed */
+    }
+}
+
+@media (max-width: 500px) {
+    .btn_year button {
+        margin: 0 62px;
+        /* Adjust the margin as needed */
+    }
+}
+
+.calCell:hover {
+    background-color: rgba(16, 94, 136, 0.5);
+    /* Adjust the background color and other styles as needed */
+}
+
+.calCell {
+    /* Your existing styles */
+    position: relative;
+    /* Ensure relative positioning for tooltip */
+}
+
+.calCell:hover::after {
+    content: "សូមអោយមានថ្ងៃល្អ";
+    /* Add your tooltip message */
+    position: absolute;
+    bottom: 100%;
+    /* Position the tooltip above the cell */
+    left: 50%;
+    /* Center the tooltip horizontally */
+    transform: translateX(-50%);
+    /* Adjust horizontal alignment */
+    background-color: #1d7ea4;
+    /* Tooltip background color */
+    color: #fff;
+    /* Tooltip text color */
+    padding: 8px 12px;
+    /* Tooltip padding */
+    border-radius: 4px;
+    /* Tooltip border radius */
+    font-size: 14px;
+    /* Tooltip font size */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    z-index: 999;
+    /* Ensure tooltip appears above other elements */
+    opacity: 0.9;
+    /* Adjust tooltip opacity */
+    
+}
+
+.calCell.sunday:hover::after {
+    content: "ថ្ងៃឈប់សម្រាក";
+    /* Add your tooltip message */
+    position: absolute;
+    bottom: 100%;
+    /* Position the tooltip above the cell */
+    left: 50%;
+    /* Center the tooltip horizontally */
+    transform: translateX(-50%);
+    /* Adjust horizontal alignment */
+    background-color: #1d7ea4;
+    /* Tooltip background color */
+    color: #fff;
+    /* Tooltip text color */
+    padding: 8px 12px;
+    /* Tooltip padding */
+    border-radius: 4px;
+    /* Tooltip border radius */
+    font-size: 14px;
+    /* Tooltip font size */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    z-index: 999;
+    /* Ensure tooltip appears above other elements */
+    opacity: 0.9;
+    /* Adjust tooltip opacity */
+}
+
+.calBlank:hover::after {
+    content: "មិនមានថ្ងៃបង្ហាញ";
+    /* Add your tooltip message */
+    position: absolute;
+    bottom: 100%;
+    /* Position the tooltip above the cell */
+    left: 50%;
+    /* Center the tooltip horizontally */
+    transform: translateX(-50%);
+    /* Adjust horizontal alignment */
+    background-color: #1d7ea4;
+    /* Tooltip background color */
+    color: #fff;
+    /* Tooltip text color */
+    padding: 8px 12px;
+    /* Tooltip padding */
+    border-radius: 4px;
+    /* Tooltip border radius */
+    font-size: 14px;
+    /* Tooltip font size */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    z-index: 999;
+    /* Ensure tooltip appears above other elements */
+    opacity: 0.9;
+    /* Adjust tooltip opacity */
+}
+
+.calToday:hover::after {
+    content: "ថ្ងៃនេះគឺជាអំណោយ";
+    /* Add your tooltip message */
+    position: absolute;
+    bottom: 100%;
+    /* Position the tooltip above the cell */
+    left: 50%;
+    /* Center the tooltip horizontally */
+    transform: translateX(-50%);
+    /* Adjust horizontal alignment */
+    background-color: #1d7ea4;
+    /* Tooltip background color */
+    color: #fff;
+    /* Tooltip text color */
+    padding: 8px 12px;
+    /* Tooltip padding */
+    border-radius: 4px;
+    /* Tooltip border radius */
+    font-size: 14px;
+    /* Tooltip font size */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    z-index: 999;
+    /* Ensure tooltip appears above other elements */
+    opacity: 0.9;
+    /* Adjust tooltip opacity */
+}
+
+/* (E) FESTIVAL TOOLTIP */
+.calHead .calCell:hover::after {
+    content: "ស្វាគមន៍មកកាន់ថ្ងៃថ្មី";
+    position: absolute;
+    bottom: 100%;
+    /* Position the tooltip above the cell */
+    left: 50%;
+    /* Center the tooltip horizontally */
+    transform: translateX(-50%);
+    /* Adjust horizontal alignment */
+    background-color: #1d7ea4;
+    /* Tooltip background color */
+    color: #fff;
+    /* Tooltip text color */
+    padding: 8px 12px;
+    /* Tooltip padding */
+    border-radius: 4px;
+    /* Tooltip border radius */
+    font-size: 14px;
+    /* Tooltip font size */
+    white-space: nowrap;
+    /* Prevent line breaks */
+    z-index: 999;
+    /* Ensure tooltip appears above other elements */
+    opacity: 0.9;
+    /* Adjust tooltip opacity */
+}
+
+
+
+</style>
+
+
+<body>
+    <section>
+        <!-- (A) PERIOD SELECTOR -->
+        <div id="calPeriod">
+            <select id="calMonth"></select>
+            <div class="current-year" id="calYear">2024</div>
+        </div>
+
+        <!-- (B) CALENDAR -->
+        <div id="calWrap"></div>
+        
+
+        <!-- (C) EVENT FORM -->
+        <dialog id="calForm">
+            <form method="dialog">
+                <div id="evtClose">X</div>
+                <h2>CALENDAR EVENT</h2>
+                <label>Date</label>
+                <input type="text" id="evtDate" readonly>
+                <label style=" text-align: center;">Details</label>
+                <textarea id="evtTxt" required></textarea>
+
+                <input id="evtDel" type="button" value="Delete">
+                <input id="evtSave" type="submit" value="Save">
+            </form>
+        </dialog>
+    </section>
+    <section>
+        <div class="btn_year">
+            <button type="button" id="back"><i class='bx bx-chevron-left'></i>Previous</button>
+            <button type="button" id="next">Next<i class='bx bx-chevron-right'></i></button>
+        </div>
+    </section>
+    <script>
+        var cal = {
+    // (A) PROPERTIES
+    // (A1) FLAGS & DATA
+    sMon: false, // week start on monday
+    data: null, // events for selected period
+    sDay: 0, sMth: 0, sYear: 0, // selected day month year
+
+    // (A2) MONTHS & DAY NAMES
+    months: [
+        "មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា",
+        "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"
+    ],
+    days: ["អាទិត្យ", "ចន្ទ", "អង្ការ", "ពុធ", "ព្រ.ហ", "សុក្រ", "សៅរ៍"],
+
+    // Define the festival days you want to highlight with corresponding letters
+    festivalMonths: {
+        // January
+        0: { 1: "ទិវាចូលឆ្នាំសកល", 7: "ទិវាជ័យជម្នះលើរបបប្រល័យពូជសាសន៍" },
+
+        // February
+        1: {},
+
+        // March
+        2: { 8: "ទិវាសិទ្ធិនារី" },
+
+        // April
+        3: { 14: "ពិធីបុណ្យចូលឆ្នាំប្រពៃណីជាតិ-មហាសង្រ្កាន្ត", 15: "ពិធីបុណ្យចូលឆ្នាំប្រពៃណីជាតិ-វិរវ័នវត", 16: "ពិធីបុណ្យចូលឆ្នាំប្រពៃណីជាតិ-ថ្ងៃឡើងស័ក" },
+
+        // May
+        4: { 1: "ទិវាពលកម្មអន្តរជាតិ", 14: "ព្រះរាជពិធីបុណ្យចម្រើនព្រះជន្ម ព្រះករុណាព្រះបាទសម្ដេចព្រះបរមនាថ នរោត្ដម សីហមុនី ព្រះមហាក្សត្រនៃព្រះរាជាណាចក្រកម្ពុជា", 22: "ពិធីបុណ្យវិសាខបូជា", 26: "ព្រះរាជពិធីបុណ្យច្រត់ព្រះនង្គ័ល" },
+
+        // June
+        5: { 18: "ព្រះរាជពិធីបុណ្យចម្រើនព្រះជន្ម សម្ដេចព្រះមហាក្សត្រីនរោត្ដម មុនីនាថ សីហនុ ព្រះវររាជមាតាជាតិខ្មែរក្នុងសេរីភាព សេចក្ដីថ្លៃថ្នូរ និងសុភមង្គល" },
+
+        // July
+        6: {},
+
+        // August
+        7: {},
+
+        // September
+        8: { 24: "ទិវាប្រកាសរដ្ឋធម្មនុញ្ញ" },
+
+        // October
+        9: { 1: "ពិធីបុណ្យភ្ជុំបិណ្ឌ", 2: "ពិធីបុណ្យភ្ជុំបិណ្ឌ", 3: "ពិធីបុណ្យភ្ជុំបិណ្ឌ", 15: "ទិវាប្រារព្ធពិធីគោរពវិញ្ញាណក្ខន្ឌ ព្រះករុណាព្រះបាទសម្ដេច ព្រះ នរោត្ដម​ សីហនុ ព្រះមហាវីរក្សត្រ ព្រះវររាជមិតាឯករាជ្យ បូរណភាពទឹកដី​ និងឯកភាពជាតិខ្មែរ", 25: "" },
+
+        // November
+        10: { 9: "ពិធីបុណ្យឯករាជ្យជាតិ", 14: "ព្រះរាជពិធីបុណ្យអុំទូក បណ្ដែតប្រទីប និង​សំពះព្រះខែអកអំបុក", 15: "ព្រះរាជពិធីបុណ្យអុំទូក បណ្ដែតប្រទីប និង​សំពះព្រះខែអកអំបុក", 16: "ព្រះរាជពិធីបុណ្យអុំទូក បណ្ដែតប្រទីប និង​សំពះព្រះខែអកអំបុក" },
+
+        // December
+        11: { 29: "ទិវាសន្តិភាពនៅកម្ពុជា" }
+    },
+
+    // (A3) HTML ELEMENTS
+    hMth: null, hYear: null, // month/year selector
+    hWrap: null, // calendar wrapper
+    hFormWrap: null, hForm: null, // event form
+    hfDate: null, hfTxt: null, hfDel: null, // form fields
+
+    // (B) INIT CALENDAR
+    init: () => {
+        // (B1) GET HTML ELEMENTS
+        cal.hMth = document.getElementById("calMonth");
+        cal.hYear = document.getElementById("calYear");
+        cal.hWrap = document.getElementById("calWrap");
+        cal.hFormWrap = document.getElementById("calForm");
+        cal.hForm = cal.hFormWrap.querySelector("form");
+        cal.hfDate = document.getElementById("evtDate");
+        cal.hfTxt = document.getElementById("evtTxt");
+        cal.hfDel = document.getElementById("evtDel");
+        cal.allYearBtn = document.getElementById("allYearBtn"); // Button for setting event all year
+
+        // (B2) APPEND MONTHS/YEAR
+        let now = new Date(),
+            nowMth = now.getMonth();
+        cal.hYear.value = parseInt(now.getFullYear());
+        for (let i = 0; i < 12; i++) {
+            let opt = document.createElement("option");
+            opt.value = i;
+            opt.innerHTML = cal.months[i];
+            if (i == nowMth) { opt.selected = true; }
+            cal.hMth.appendChild(opt);
+        }
+
+        // (B3) ATTACH CONTROLS
+        cal.hMth.onchange = () => {
+            cal.draw();
+            cal.addFestivals();
+        };
+        cal.hYear.onchange = cal.draw;
+        cal.hForm.onsubmit = cal.save;
+        document.getElementById("evtClose").onclick = () => cal.hFormWrap.close();
+        cal.hfDel.onclick = cal.del;
+
+        // (B4) START - DRAW CALENDAR
+        if (cal.sMon) { cal.days.push(cal.days.shift()); }
+        cal.draw();
+
+        // (B5) ADD KHMER FESTIVALS
+        cal.addFestivals();
+    },
+
+    // (C) DRAW CALENDAR FOR SELECTED MONTH
+    draw: () => {
+        // (C1) DAYS IN MONTH + START/END DAYS
+        cal.sMth = parseInt(cal.hMth.value); // selected month
+        cal.sYear = parseInt(cal.hYear.value); // selected year
+        document.querySelector(".current-year").innerHTML = cal.sYear;
+        let daysInMth = new Date(cal.sYear, cal.sMth + 1, 0).getDate(), // number of days in selected month
+            startDay = new Date(cal.sYear, cal.sMth, 1).getDay(), // first day of the month
+            endDay = new Date(cal.sYear, cal.sMth, daysInMth).getDay(), // last day of the month
+            now = new Date(), // current date
+            nowMth = now.getMonth(), // current month
+            nowYear = parseInt(now.getFullYear()), // current year
+            nowDay = cal.sMth == nowMth && cal.sYear == nowYear ? now.getDate() : null;
+
+        // (C2) LOAD DATA FROM LOCALSTORAGE
+        cal.data = localStorage.getItem(`cal-${cal.sMth}-${cal.sYear}`);
+        if (cal.data == null) {
+            localStorage.setItem(`cal-${cal.sMth}-${cal.sYear}`, "{}");
+            cal.data = {};
+        } else { cal.data = JSON.parse(cal.data); }
+
+        // (C3) DRAWING CALCULATIONS
+        let squares = [];
+        if (cal.sMon && startDay != 1) {
+            let blanks = startDay == 0 ? 7 : startDay;
+            for (let i = 1; i < blanks; i++) { squares.push("b"); }
+        }
+        if (!cal.sMon && startDay != 0) {
+            for (let i = 0; i < startDay; i++) { squares.push("b"); }
+        }
+        for (let i = 1; i <= daysInMth; i++) { squares.push(i); }
+        if (cal.sMon && endDay != 0) {
+            let blanks = endDay == 6 ? 1 : 7 - endDay;
+            for (let i = 0; i < blanks; i++) { squares.push("b"); }
+        }
+        if (!cal.sMon && endDay != 6) {
+            let blanks = endDay == 0 ? 6 : 6 - endDay;
+            for (let i = 0; i < blanks; i++) { squares.push("b"); }
+        }
+
+        // (C4) "RESET" CALENDAR
+        cal.hWrap.innerHTML = `<div class="calHead"></div>
+<div class="calBody">
+    <div class="calRow"></div>
+</div>`;
+
+        // (C5) CALENDAR HEADER - DAY NAMES
+        let wrap = cal.hWrap.querySelector(".calHead");
+        for (let d of cal.days) {
+            let cell = document.createElement("div");
+            cell.className = "calCell";
+            cell.innerHTML = d;
+            wrap.appendChild(cell);
+        }
+
+        // (C6) CALENDAR BODY - INDIVIDUAL DAYS & EVENTS
+        wrap = cal.hWrap.querySelector(".calBody");
+        row = cal.hWrap.querySelector(".calRow");
+        for (let i = 0; i < squares.length; i++) {
+            let cell = document.createElement("div");
+            cell.className = "calCell";
+            if ((cal.sMon ? (i % 7 === 6) : (i % 7 === 0)) && squares[i] !== "b") {
+                cell.classList.add("sunday"); // Add Sunday class
+            }
+
+            if (nowDay == squares[i]) { cell.classList.add("calToday"); }
+            if (squares[i] == "b") { cell.classList.add("calBlank"); }
+            else {
+                cell.innerHTML = `<div class="cellDate">${squares[i]}</div>`;
+                if (cal.data[squares[i]]) {
+                    cell.innerHTML += "<div class='evt'>" + cal.data[squares[i]] + "</div>";
+                }
+
+                // Check if the current cell has a festival and show the popup message
+                const month = parseInt(cal.hMth.value);
+                const festivals = cal.festivalMonths[month];
+                const day = parseInt(squares[i]);
+                if (festivals && festivals.hasOwnProperty(day)) {
+                    const festivalDescription = festivals[day];
+                    cell.title = festivalDescription; // Set the festival description as the title attribute
+                    cell.style.cursor = "pointer"; // Change cursor to pointer to indicate it's clickable
+                    cell.onclick = () => {
+                        alert(festivalDescription);
+                    };
+                }
+            }
+            row.appendChild(cell);
+
+            if (i != (squares.length - 1) && i != 0 && (i + 1) % 7 == 0) {
+                row = document.createElement("div");
+                row.className = "calRow";
+                wrap.appendChild(row);
+            }
+        }
+
+        // (C7) ADD FESTIVALS AFTER DRAWING
+        cal.addFestivals();
+    },
+
+
+    // (G) NAVIGATE PREVIOUS YEAR
+    navigatePreviousYear: () => {
+        cal.hYear.value = parseInt(cal.hYear.value) - 1;
+        cal.draw();
+    },
+
+    // (H) NAVIGATE NEXT YEAR
+    navigateNextYear: () => {
+        cal.hYear.value = parseInt(cal.hYear.value) + 1;
+        cal.draw();
+    },
+
+    // (I) ADD KHMER FESTIVALS
+    addFestivals: () => {
+        const month = parseInt(cal.hMth.value);
+        const festivals = cal.festivalMonths[month];
+        const cells = document.querySelectorAll(".calCell");
+
+        cells.forEach((cell) => {
+            const cellDate = cell.querySelector(".cellDate");
+            if (cellDate) {
+                const day = parseInt(cellDate.innerHTML);
+                if (festivals && festivals.hasOwnProperty(day)) {
+                    const festivalLetter = festivals[day];
+                    let festivalElement = cell.querySelector(".festival-letter");
+                    if (!festivalElement) {
+                        festivalElement = document.createElement("div");
+                        festivalElement.classList.add("festival-letter");
+                        cell.appendChild(festivalElement);
+                    }
+                    festivalElement.innerHTML = festivalLetter;
+                } else {
+                    let festivalElement = cell.querySelector(".festival-letter");
+                    if (festivalElement) {
+                        festivalElement.remove();
+                    }
+                }
+            }
+        });
+    },
+
+};
+
+window.onload = () => {
+    cal.init();
+    // Get the next and back buttons
+    const backButton = document.getElementById("back");
+    const nextButton = document.getElementById("next");
+
+    // Add event listeners to the buttons
+    backButton.addEventListener("click", cal.navigatePreviousYear);
+    nextButton.addEventListener("click", cal.navigateNextYear);
+};
+
+
+
+
+    </script>
+
+</body>
+
+</html>
